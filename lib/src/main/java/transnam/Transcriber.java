@@ -16,7 +16,6 @@ public class Transcriber {
 
     public String getEnglishSurname(String surnamePersian) throws IOException, URISyntaxException {
         readDictionary();
-
         return lastnamePerEng.get(surnamePersian);
     }
 

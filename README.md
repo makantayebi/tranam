@@ -14,10 +14,10 @@ Convert names between Latin Script and Modern Persian Script.
 * [ ] If match is not found, add the query in a new line to the file backlog.txt
 
 In Persian string matching:
-* [ ] Ignore the space or half-space
-* [ ] Following chars are ignored: َ  - ُ  -  ِ  -  ّ  - ، -  ء - ً  - ٌ  - ٍ 
-* [ ] ة=ه
-* [ ] ئ=ي=ی
+* [x] Ignore the space or half-space
+* [x] Following chars are ignored: َ  - ُ  -  ِ  -  ّ  - ، -  ء - ً  - ٌ  - ٍ   ّ
+* [x] ة=ه
+* [x] ي=ی
 
 ## Get started
 * On Ubuntu, make sure gradle is installed.
