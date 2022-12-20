@@ -4,16 +4,19 @@ import java.lang.String;
 
 public class PersianWord implements java.lang.Comparable {
     private String word, comparable;
-    
+    public final static String ZERO_WIDTH_JOIN = "‌";
     public PersianWord(String word) {
         setWord(word);
     }
 
     public void setWord(String word) {
         word = word.replace("ة", "ه").replace("ي", "ی")
-                .replace(" ", "‌").replace("ۀ", "ه")
-                .replace("ؤ", "و").replace("إ", "ا")
-                .replace("أ", "ا").replace("ء", "");
+                .replace("(", ZERO_WIDTH_JOIN).replace(")", ZERO_WIDTH_JOIN)
+                .replace(" ", ZERO_WIDTH_JOIN).replace("ۀ", "ه")
+                .replace("ؤ", "و").replace("إ", "ا").replace(" ّ", "")
+                .replace("ً", "").replace("ٌ", "").replace("ٍ", "") // neglect An, En, On
+                .replace("َ", "").replace("ُ", "").replace("ِ", "") // neglect A, E, O
+                .replace("أ", "ا").replace("ء", "").replaceAll("[" + ZERO_WIDTH_JOIN + "]+", ZERO_WIDTH_JOIN);
         this.word = word;
         setComparable(word);
     }
@@ -23,10 +26,7 @@ public class PersianWord implements java.lang.Comparable {
     }
 
     private void setComparable(String word) {
-        this.comparable = word.replace(" ", "").replace("‌", "")
-                .replace("َ", "").replace("ُ", "").replace("ِ", "") // neglect A, E, O
-                .replace("ً", "").replace("ٌ", "").replace("ٍ", "") // neglect An, En, On
-                .replace(" ّ", "");
+        this.comparable = word.replace(ZERO_WIDTH_JOIN, "");
     }
 
     public String getWord() {

@@ -14,36 +14,97 @@ import java.util.Map;
 
 public class Transcriber {
 
-    public String getEnglishSurname(String surnamePersian) throws IOException, URISyntaxException {
-        readDictionary();
-        return lastnamePerEng.get(surnamePersian);
-    }
-
-    public String getPersianSurname(String surnameEnglish) throws IOException, URISyntaxException {
-        readDictionary();
-        return lastnameEngPer.get(surnameEnglish);
-    }
-
     public String getEnglishFirstname(String firstnamePersian) throws IOException, URISyntaxException {
-        readDictionary();
-        return firstnamePerEng.get(firstnamePersian);
+        touchDictionary();
+        PersianWord queryWord = new PersianWord(firstnamePersian);
+
+        String firstnameEnglish = firstnamePerEng.get(queryWord);
+
+        // If English transcribe is found
+        if (firstnameEnglish != null) {
+            return firstnameEnglish;
+        }
+
+        // If English transcribe is not found, check the lastnames.
+        firstnameEnglish = lastnamePerEng.get(queryWord);
+        if (firstnameEnglish != null) {
+            return firstnameEnglish;
+        }
+
+        // Split the name based on whitespace, transcribe each part.
+        firstnamePersian = firstnamePersian.replace(" ", PersianWord.ZERO_WIDTH_JOIN);
+        String [] subnames = firstnamePersian.split(PersianWord.ZERO_WIDTH_JOIN);
+        
+        if(subnames.length == 0) {
+            return null;
+        }
+
+        firstnameEnglish = "";
+        for(String subname : subnames){
+            String subnameEnglish = firstnamePerEng.get(new PersianWord(subname));
+            if(subnameEnglish == null){
+                return null;
+            }
+            firstnameEnglish += PersianWord.ZERO_WIDTH_JOIN + subnameEnglish;
+        }
+        return firstnameEnglish;
     }
 
     public String getPersianFirstname(String firstnameEnglish) throws IOException, URISyntaxException {
-        readDictionary();
-        return firstnameEngPer.get(firstnameEnglish);
+        touchDictionary();
+        return firstnameEngPer.get(firstnameEnglish).getWord();
     }
 
-    private Map<String, String> firstnameEngPer;
-    private Map<String, String> firstnamePerEng;
-    private Map<String, String> lastnameEngPer;
-    private Map<String, String> lastnamePerEng;
+    public String getEnglishSurname(String surnamePersian) throws IOException, URISyntaxException {
+        touchDictionary();
+        PersianWord queryWord = new PersianWord(surnamePersian);
+
+        String lastnameEnglish = lastnamePerEng.get(queryWord);
+
+        // If English transcribe is found
+        if (lastnameEnglish != null) {
+            return lastnameEnglish;
+        }
+
+        // If English transcribe is not found, check the firstnames.
+        lastnameEnglish = firstnamePerEng.get(queryWord);
+        if (lastnameEnglish != null) {
+            return lastnameEnglish;
+        }
+
+        // Split the name based on whitespace, transcribe each part.
+        surnamePersian = surnamePersian.replace(" ", PersianWord.ZERO_WIDTH_JOIN);
+        String [] subnames = surnamePersian.split(PersianWord.ZERO_WIDTH_JOIN);
+        
+        if(subnames.length == 0) {
+            return null;
+        }
+
+        lastnameEnglish = "";
+        for(String subname : subnames){
+            String subnameEnglish = lastnamePerEng.get(new PersianWord(subname));
+            if(subnameEnglish == null){
+                return null;
+            }
+            lastnameEnglish += PersianWord.ZERO_WIDTH_JOIN + subnameEnglish;
+        }
+        return lastnameEnglish;
+    }
+    public String getPersianSurname(String surnameEnglish) throws IOException, URISyntaxException {
+        touchDictionary();
+        return lastnameEngPer.get(surnameEnglish).getWord();
+    }
+
+    private Map<String, PersianWord> firstnameEngPer;
+    private Map<PersianWord, String> firstnamePerEng;
+    private Map<String, PersianWord> lastnameEngPer;
+    private Map<PersianWord, String> lastnamePerEng;
 
     // If the Transcriber has not loaded the dictionaries into the memory, then
     // Transcriber is not ready.
     private boolean ready = false;
 
-    private void readDictionary() throws IOException, URISyntaxException {
+    private void touchDictionary() throws IOException, URISyntaxException {
         if (ready) {
             return;
         }
@@ -69,8 +130,8 @@ public class Transcriber {
             if (pair.length != 2) {
                 throw new IllegalArgumentException("Unexpected line: `" + line + "`");
             }
-            firstnameEngPer.put(pair[1], pair[0]);
-            firstnamePerEng.put(pair[0], pair[1]);
+            firstnameEngPer.put(pair[1], new PersianWord(pair[0]));
+            firstnamePerEng.put(new PersianWord(pair[0]), pair[1]);
 
             // read next line
             line = buffedReader.readLine();
@@ -95,8 +156,8 @@ public class Transcriber {
             if (pair.length != 2) {
                 throw new IllegalArgumentException("Unexpected line: `" + line + "`");
             }
-            lastnameEngPer.put(pair[1], pair[0]);
-            lastnamePerEng.put(pair[0], pair[1]);
+            lastnameEngPer.put(pair[1], new PersianWord(pair[0]));
+            lastnamePerEng.put(new PersianWord(pair[0]), pair[1]);
 
             // read next line
             line = buffedReader.readLine();

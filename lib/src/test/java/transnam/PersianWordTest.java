@@ -17,12 +17,19 @@ public class PersianWordTest {
     PersianWord word4 = new PersianWord("گ");
     PersianWord word5 = new PersianWord("الف");
     PersianWord word6 = new PersianWord("ال ف");
+    PersianWord word7 = new PersianWord("مهدی(ژینا)");
+    PersianWord word8 = new PersianWord("مهدی‌(ُ(ژینا)ِ ِ)");
 
     @Test
     public void testEqual() {
         assertTrue("General Comparison works.", !word1.equals(word3));
         assertTrue("Ignoring arabic equivalents of Persian letters works.", word1.equals(word2));
         assertTrue("Removing white space works.", word5.equals(word6));
+    }
+
+    @Test
+    public void testStringProcessing() {
+        assertTrue("Removing sequences of ignore-list chars works.", word7.equals(word8));
     }
 
     @Test
@@ -38,12 +45,12 @@ public class PersianWordTest {
         for (PersianWord word : words) {
             if (i == 0 && word.equals("الف")) {
                 assertTrue("Sorting the first letter worked.", true);
-            } else if(i == 0) {
+            } else if (i == 0) {
                 assertTrue("Sorting the first letter did NOT work.", false);
             }
             if (i == 4 && word.equals(word4)) {
                 assertTrue("Sorting the last letter worked.", true);
-            } else if(i == 4) {
+            } else if (i == 4) {
                 assertTrue("Sorting the last letter did NOT work.", false);
             }
             i++;
