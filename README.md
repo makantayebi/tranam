@@ -5,7 +5,7 @@ Convert names between Latin Script and Modern Persian Script.
 
 ## Description
 
-* Write the following algorithm: 
+* The following method is used:
 
 * [x] remove paranthesis from the query, but not the content.
 * [x] If a first or last name is queried, check against the existing list of firstname.csv or lastname.csv and return if match found.
@@ -15,6 +15,7 @@ Convert names between Latin Script and Modern Persian Script.
 * [ ] If there is paranthesis in a record, produce the result, but warn the user
 * [ ] If anything except these letters  [‌‌آبپتث‌جچحخدذرزژسشصضطظعغفقکگلمنوهی‌] and the ignore list comes up, warn the user.
 * [x] Read a list of persian first and lastnames, and transcribe each of them, and write the result in a separate file.
+* [ ] English Hashtags should follow camel-case for firstname and lastname.
 
 In Persian string matching:
 * [x] Ignore the space or half-space
