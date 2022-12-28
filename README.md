@@ -14,6 +14,7 @@ Convert names between Latin Script and Modern Persian Script.
 * [ ] If match is not found, add the query in a new line to the file backlog.txt
 * [ ] If there is paranthesis in a record, produce the result, but warn the user
 * [ ] If anything except these letters  [‌‌آبپتث‌جچحخدذرزژسشصضطظعغفقکگلمنوهی‌] and the ignore list comes up, warn the user.
+* [x] Read a list of persian first and lastnames, and transcribe each of them, and write the result in a separate file.
 
 In Persian string matching:
 * [x] Ignore the space or half-space
