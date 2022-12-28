@@ -6,31 +6,91 @@ package transnam;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Scanner;
+
 public class TranscriberTest {
 
     @Test
     public void testPersianFirstNameToEnglish() {
         Transcriber t = new Transcriber();
         String result = "not Mehrdad";
-        try{
+        try {
             result = t.getEnglishFirstname("مهرداد");
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         // System.out.println("Result: `" + result + "`");
         assertTrue(result.equals("Mehrdad"));
     }
-    
+
     @Test
     public void testEnglishFirstNameToPersian() {
         Transcriber t = new Transcriber();
         String result = "مهرداد نه";
-        try{
+        try {
             result = t.getPersianFirstname("Mehrdad");
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         // System.out.println("Result: `" + result + "`");
         assertTrue(result.equals("مهرداد"));
+    }
+
+    @Test
+    public void translateFullnames() {
+        try {
+            String inputFileName = "persianNames.csv";
+            String outputFileName = "englishNames.csv";
+            URL resource = getClass().getClassLoader().getResource(inputFileName);
+            Transcriber transnam = new Transcriber();
+            File persianNamesFile = new File(resource.toURI());
+            FileReader reader;
+            reader = new FileReader(persianNamesFile);
+            BufferedReader buffedReader = new BufferedReader(reader);
+            String line = buffedReader.readLine();
+            PrintWriter writer = new PrintWriter(outputFileName, "UTF-8");
+            while (line != null) {
+                String[] pair = line.split(",");
+                String firstname = pair[0];
+                String lastname = pair[1];
+                String firstnameEnglish = transnam.getEnglishFirstname(firstname);
+                String lastnameEnglish = transnam.getEnglishSurname(lastname);
+                writer.println(firstnameEnglish + "," + lastnameEnglish + ",#" + firstnameEnglish + lastnameEnglish);
+                line = buffedReader.readLine();
+            }
+            writer.flush();
+            writer.close();
+            buffedReader.close();
+            // Read the output file and evaluate the result.
+            File outputFile = new File(outputFileName);
+            Scanner outputReader = new Scanner(outputFile);
+            String line1 = outputReader.nextLine();
+            assertTrue("Kasra Ghadami comparison: ","Kasra,Ghadami,#KasraGhadami".equals(line1));
+            String line2 = outputReader.nextLine();
+            assertTrue("Masoomeh Nahvi comparison: ","Masoomeh,Nahvi,#MasoomehNahvi".equals(line2));
+            String line3 = outputReader.nextLine();
+            assertTrue("Yahya Sobhan comparison: ","Yahya,Sobhan,#YahyaSobhan".equals(line3));
+            outputReader.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            assertTrue(false);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            assertTrue(false);
+        } catch (URISyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            assertTrue(false);
+        }
     }
 }
